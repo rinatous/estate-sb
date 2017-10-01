@@ -52,18 +52,19 @@ async def fetch_content(url):
     if is_cian or is_avito:
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
-                http_page = await response.text()
-                doc = lxml.html.fromstring(http_page)
+                if response.status == 200:
+                    http_page = await response.text()
+                    doc = lxml.html.fromstring(http_page)
 
-                for _ in doc.xpath('//meta'):
-                    if _.get('property') == 'og:title':
-                        t = _.get('content')
-                    elif _.get('property') == 'og:description':
-                        d = _.get('content')
-                if is_cian:
-                    for _ in doc.xpath('//div[@class="fotorama"]/img'):
-                        i.append(_.get('src'))
-                else:
-                    for _ in doc.xpath('//div[@class="gallery-img-frame js-gallery-img-frame"]'):
-                        i.append(_.get('data-url'))
+                    for _ in doc.xpath('//meta'):
+                        if _.get('property') == 'og:title':
+                            t = _.get('content')
+                        elif _.get('property') == 'og:description':
+                            d = _.get('content')
+                    if is_cian:
+                        for _ in doc.xpath('//div[@class="fotorama"]/img'):
+                            i.append(_.get('src'))
+                    else:
+                        for _ in doc.xpath('//div[@class="gallery-img-frame js-gallery-img-frame"]'):
+                            i.append(_.get('data-url'))
     return WebPage(t, d, i)
