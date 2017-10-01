@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  estatesb:
+    build: ./
+    volumes:
+      - ./webapp:/usr/src/app
+    ports:
+      - 5000:8088
